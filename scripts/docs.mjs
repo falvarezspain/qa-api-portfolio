@@ -3,12 +3,18 @@ import { cases } from '../cases.mjs';
 
 const string = { type: 'string' };
 const quantity = { type: 'integer', minimum: 1, maximum: 5 };
-const orderInput = { type: 'object', required: ['sku', 'quantity'], properties: { sku: string, quantity } };
+const cents = { type: 'integer', minimum: 0 };
+const coupon = { type: 'string', description: 'DEMO10 aplica 10 % desde un subtotal de 90 EUR.' };
+const orderInput = { type: 'object', required: ['sku', 'quantity'], properties: { sku: string, quantity, coupon } };
+const orderId = { in: 'path', name: 'id', required: true, schema: string, example: 'ORD-1' };
 const header = (name, description, example) => ({ in: 'header', name, description, schema: string, example });
 const orderBody = {
   required: true,
   content: { 'application/json': { schema: orderInput, examples: {
     valid: { summary: 'Pedido válido', value: { sku: 'SKU-100', quantity: 1 } },
+    discountWithShipping: { summary: 'Cupón válido y envío con cargo', value: { sku: 'SKU-100', quantity: 2, coupon: 'DEMO10' } },
+    discountFreeShipping: { summary: 'Cupón válido y envío gratis', value: { sku: 'SKU-100', quantity: 3, coupon: 'DEMO10' } },
+    belowCouponMinimum: { summary: 'Subtotal inferior al mínimo del cupón', value: { sku: 'SKU-100', quantity: 1, coupon: 'DEMO10' } },
     noStock: { summary: 'Producto sin stock', value: { sku: 'SKU-200', quantity: 1 } },
     invalid: { summary: 'Cantidad fuera de rango', value: { sku: 'SKU-100', quantity: 0 } },
     malformed: { summary: 'JSON malformado', value: '{"sku":' },
@@ -26,11 +32,16 @@ const operations = [
   ['/api/checkout-v1', 'post', 'Redirecciones', 'Redirigir checkout legado', { security: auth, requestBody: orderBody }],
   ['/api/orders', 'post', 'Pedidos', 'Crear un pedido o repetirlo con la misma clave', {
     security: auth, requestBody: orderBody,
-    parameters: [header('Idempotency-Key', 'Si se incluye, permite repetir un pedido por identidad.', 'qa-001')],
+    description: 'El teclado cuesta 45 EUR y el ratón cuesta 20 EUR. DEMO10 descuenta 10 % desde 90 EUR de subtotal y solo puede estar aplicado a un pedido confirmado por comprador. El envío cuesta 7 EUR y es gratis desde 90 EUR después del descuento.',
+    parameters: [header('Idempotency-Key', 'La misma identidad, SKU, cantidad y cupón recuperan el pedido en su estado actual.', 'qa-001')],
   }],
   ['/api/orders/{id}', 'get', 'Pedidos', 'Consultar un pedido como propietario', {
     security: auth,
-    parameters: [{ in: 'path', name: 'id', required: true, schema: string, example: 'ORD-1' }],
+    parameters: [orderId],
+  }],
+  ['/api/orders/{id}/cancel', 'post', 'Pedidos', 'Cancelar un pedido y liberar su reserva', {
+    security: auth, parameters: [orderId],
+    description: 'Solo el propietario puede cancelar. La primera cancelación devuelve el stock y libera el cupón. Las siguientes devuelven el mismo pedido cancelado.',
   }],
   ['/api/lab/fault', 'get', 'Resiliencia', 'Simular un fallo controlado', {
     parameters: [{ in: 'query', name: 'scenario', required: true, schema: string, examples: {
@@ -51,7 +62,7 @@ const descriptions = {
 const spec = {
   openapi: '3.0.3',
   info: {
-    title: 'QA API Portfolio · Tienda demo', version: '1.0.0',
+    title: 'QA API Portfolio · Tienda demo', version: '1.1.0',
     description: 'Laboratorio de pruebas black-box. [Ver matriz y pasos](./casos.html). Usa **Authorize** e ingresa `demo-buyer` para crear pedidos, `demo-reader` para probar permisos o `demo-other` para verificar aislamiento. Reinicia el servidor para recuperar el stock inicial. El navegador puede seguir las redirecciones automáticamente.',
   },
   servers: [{ url: '.' }],
@@ -62,7 +73,18 @@ const spec = {
       Error: { type: 'object', required: ['result', 'code', 'message'], properties: {
         result: { type: 'string', enum: ['KO'] }, code: string, message: string,
       } },
-      Order: { type: 'object', required: ['id', 'sku', 'quantity'], properties: { id: string, sku: string, quantity } },
+      Order: { type: 'object', required: ['id', 'sku', 'quantity', 'status', 'pricing'], properties: {
+        id: string, sku: string, quantity, coupon,
+        status: { type: 'string', enum: ['CONFIRMED', 'CANCELLED'] },
+        pricing: { $ref: '#/components/schemas/Pricing' },
+      } },
+      Pricing: { type: 'object', description: 'Importes en céntimos de euro.',
+        required: ['currency', 'subtotalCents', 'discountCents', 'shippingCents', 'totalCents'],
+        properties: {
+          currency: { type: 'string', enum: ['EUR'] }, subtotalCents: cents, discountCents: cents,
+          shippingCents: cents, totalCents: cents,
+        },
+      },
       Product: { type: 'object', required: ['id', 'name', 'stock'], properties: {
         id: string, name: string, stock: { type: 'integer', minimum: 0 },
       } },
@@ -75,7 +97,7 @@ for (const [path, method, tag, summary, options] of operations) {
   const links = new Set();
   for (const [id, title, , , ...steps] of cases) {
     steps.forEach(([request, expected], index) => {
-      const route = request.path.split('?')[0].replace(/\/ORD-\d+$/, '/{id}');
+      const route = request.path.split('?')[0].replace(/\/ORD-\d+(?=\/|$)/, '/{id}');
       if (request.method.toLowerCase() !== method || route !== path) return;
       links.add(id);
       if (request.follow) return;
@@ -104,7 +126,8 @@ for (const [path, method, tag, summary, options] of operations) {
   spec.paths[path] ??= {};
   spec.paths[path][method] = {
     tags: [tag], summary, ...options,
-    description: 'Casos: ' + [...links].map(id => '[' + id + '](./casos.html#' + id + ')').join(' · '),
+    description: [options?.description, 'Casos: ' + [...links].map(id => '[' + id + '](./casos.html#' + id + ')').join(' · ')]
+      .filter(Boolean).join('\n\n'),
     responses,
   };
 }

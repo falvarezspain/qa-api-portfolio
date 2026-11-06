@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "QA API Portfolio · Tienda demo",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Laboratorio de pruebas black-box. [Ver matriz y pasos](./casos.html). Usa **Authorize** e ingresa `demo-buyer` para crear pedidos, `demo-reader` para probar permisos o `demo-other` para verificar aislamiento. Reinicia el servidor para recuperar el stock inicial. El navegador puede seguir las redirecciones automáticamente."
   },
   "servers": [
@@ -276,6 +276,10 @@
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 5
+                  },
+                  "coupon": {
+                    "type": "string",
+                    "description": "DEMO10 aplica 10 % desde un subtotal de 90 EUR."
                   }
                 }
               },
@@ -285,6 +289,30 @@
                   "value": {
                     "sku": "SKU-100",
                     "quantity": 1
+                  }
+                },
+                "discountWithShipping": {
+                  "summary": "Cupón válido y envío con cargo",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 2,
+                    "coupon": "DEMO10"
+                  }
+                },
+                "discountFreeShipping": {
+                  "summary": "Cupón válido y envío gratis",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 3,
+                    "coupon": "DEMO10"
+                  }
+                },
+                "belowCouponMinimum": {
+                  "summary": "Subtotal inferior al mínimo del cupón",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 1,
+                    "coupon": "DEMO10"
                   }
                 },
                 "noStock": {
@@ -354,6 +382,10 @@
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 5
+                  },
+                  "coupon": {
+                    "type": "string",
+                    "description": "DEMO10 aplica 10 % desde un subtotal de 90 EUR."
                   }
                 }
               },
@@ -363,6 +395,30 @@
                   "value": {
                     "sku": "SKU-100",
                     "quantity": 1
+                  }
+                },
+                "discountWithShipping": {
+                  "summary": "Cupón válido y envío con cargo",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 2,
+                    "coupon": "DEMO10"
+                  }
+                },
+                "discountFreeShipping": {
+                  "summary": "Cupón válido y envío gratis",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 3,
+                    "coupon": "DEMO10"
+                  }
+                },
+                "belowCouponMinimum": {
+                  "summary": "Subtotal inferior al mínimo del cupón",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 1,
+                    "coupon": "DEMO10"
                   }
                 },
                 "noStock": {
@@ -432,6 +488,10 @@
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 5
+                  },
+                  "coupon": {
+                    "type": "string",
+                    "description": "DEMO10 aplica 10 % desde un subtotal de 90 EUR."
                   }
                 }
               },
@@ -441,6 +501,30 @@
                   "value": {
                     "sku": "SKU-100",
                     "quantity": 1
+                  }
+                },
+                "discountWithShipping": {
+                  "summary": "Cupón válido y envío con cargo",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 2,
+                    "coupon": "DEMO10"
+                  }
+                },
+                "discountFreeShipping": {
+                  "summary": "Cupón válido y envío gratis",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 3,
+                    "coupon": "DEMO10"
+                  }
+                },
+                "belowCouponMinimum": {
+                  "summary": "Subtotal inferior al mínimo del cupón",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 1,
+                    "coupon": "DEMO10"
                   }
                 },
                 "noStock": {
@@ -465,18 +549,18 @@
             }
           }
         },
+        "description": "El teclado cuesta 45 EUR y el ratón cuesta 20 EUR. DEMO10 descuenta 10 % desde 90 EUR de subtotal y solo puede estar aplicado a un pedido confirmado por comprador. El envío cuesta 7 EUR y es gratis desde 90 EUR después del descuento.\n\nCasos: [ORD-01](./casos.html#ORD-01) · [ORD-02](./casos.html#ORD-02) · [ORD-03](./casos.html#ORD-03) · [ORD-04](./casos.html#ORD-04) · [ORD-05](./casos.html#ORD-05) · [ORD-06](./casos.html#ORD-06) · [ORD-07](./casos.html#ORD-07) · [ORD-09](./casos.html#ORD-09) · [ORD-11](./casos.html#ORD-11) · [ORD-12](./casos.html#ORD-12) · [ORD-13](./casos.html#ORD-13) · [ORD-14](./casos.html#ORD-14) · [ORD-15](./casos.html#ORD-15) · [ORD-18](./casos.html#ORD-18) · [ORD-19](./casos.html#ORD-19) · [ORD-20](./casos.html#ORD-20) · [ORD-21](./casos.html#ORD-21) · [ORD-22](./casos.html#ORD-22) · [ORD-23](./casos.html#ORD-23) · [ORD-24](./casos.html#ORD-24) · [ORD-25](./casos.html#ORD-25) · [NEG-01](./casos.html#NEG-01) · [NEG-02](./casos.html#NEG-02) · [NEG-03](./casos.html#NEG-03) · [NEG-04](./casos.html#NEG-04) · [NEG-05](./casos.html#NEG-05) · [NEG-06](./casos.html#NEG-06) · [NEG-07](./casos.html#NEG-07) · [NEG-08](./casos.html#NEG-08) · [NEG-09](./casos.html#NEG-09) · [NEG-10](./casos.html#NEG-10) · [NEG-11](./casos.html#NEG-11) · [NEG-12](./casos.html#NEG-12) · [NEG-13](./casos.html#NEG-13)",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
-            "description": "Si se incluye, permite repetir un pedido por identidad.",
+            "description": "La misma identidad, SKU, cantidad y cupón recuperan el pedido en su estado actual.",
             "schema": {
               "type": "string"
             },
             "example": "qa-001"
           }
         ],
-        "description": "Casos: [ORD-01](./casos.html#ORD-01) · [ORD-02](./casos.html#ORD-02) · [ORD-03](./casos.html#ORD-03) · [ORD-04](./casos.html#ORD-04) · [ORD-05](./casos.html#ORD-05) · [ORD-06](./casos.html#ORD-06) · [ORD-07](./casos.html#ORD-07) · [ORD-09](./casos.html#ORD-09) · [ORD-11](./casos.html#ORD-11) · [ORD-12](./casos.html#ORD-12) · [ORD-13](./casos.html#ORD-13) · [ORD-14](./casos.html#ORD-14) · [ORD-15](./casos.html#ORD-15) · [ORD-18](./casos.html#ORD-18) · [ORD-19](./casos.html#ORD-19) · [ORD-20](./casos.html#ORD-20) · [ORD-21](./casos.html#ORD-21) · [ORD-22](./casos.html#ORD-22) · [ORD-23](./casos.html#ORD-23) · [ORD-24](./casos.html#ORD-24) · [ORD-25](./casos.html#ORD-25)",
         "responses": {
           "200": {
             "description": "Operación exitosa",
@@ -516,7 +600,55 @@
                       "data": {
                         "id": "ORD-1",
                         "sku": "SKU-100",
-                        "quantity": 1
+                        "quantity": 1,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 4500,
+                          "discountCents": 0,
+                          "shippingCents": 700,
+                          "totalCents": 5200
+                        }
+                      }
+                    }
+                  },
+                  "NEG-11-2": {
+                    "summary": "NEG-11 · Reintentar la creación después de cancelar devuelve el mismo pedido cancelado",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-11-4": {
+                    "summary": "NEG-11 · Reintentar la creación después de cancelar devuelve el mismo pedido cancelado",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CANCELLED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
                       }
                     }
                   }
@@ -562,7 +694,15 @@
                       "data": {
                         "id": "ORD-1",
                         "sku": "SKU-100",
-                        "quantity": 1
+                        "quantity": 1,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 4500,
+                          "discountCents": 0,
+                          "shippingCents": 700,
+                          "totalCents": 5200
+                        }
                       }
                     }
                   },
@@ -573,7 +713,15 @@
                       "data": {
                         "id": "ORD-1",
                         "sku": "SKU-100",
-                        "quantity": 5
+                        "quantity": 5,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 22500,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 22500
+                        }
                       }
                     }
                   },
@@ -584,7 +732,15 @@
                       "data": {
                         "id": "ORD-1",
                         "sku": "SKU-100",
-                        "quantity": 1
+                        "quantity": 1,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 4500,
+                          "discountCents": 0,
+                          "shippingCents": 700,
+                          "totalCents": 5200
+                        }
                       }
                     }
                   },
@@ -595,7 +751,15 @@
                       "data": {
                         "id": "ORD-2",
                         "sku": "SKU-100",
-                        "quantity": 4
+                        "quantity": 4,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 18000,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 18000
+                        }
                       }
                     }
                   },
@@ -606,7 +770,15 @@
                       "data": {
                         "id": "ORD-1",
                         "sku": "SKU-100",
-                        "quantity": 1
+                        "quantity": 1,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 4500,
+                          "discountCents": 0,
+                          "shippingCents": 700,
+                          "totalCents": 5200
+                        }
                       }
                     }
                   },
@@ -617,7 +789,15 @@
                       "data": {
                         "id": "ORD-1",
                         "sku": "SKU-100",
-                        "quantity": 1
+                        "quantity": 1,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 4500,
+                          "discountCents": 0,
+                          "shippingCents": 700,
+                          "totalCents": 5200
+                        }
                       }
                     }
                   },
@@ -628,7 +808,15 @@
                       "data": {
                         "id": "ORD-2",
                         "sku": "SKU-100",
-                        "quantity": 1
+                        "quantity": 1,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 4500,
+                          "discountCents": 0,
+                          "shippingCents": 700,
+                          "totalCents": 5200
+                        }
                       }
                     }
                   },
@@ -639,7 +827,428 @@
                       "data": {
                         "id": "ORD-1",
                         "sku": "SKU-100",
-                        "quantity": 1
+                        "quantity": 1,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 4500,
+                          "discountCents": 0,
+                          "shippingCents": 700,
+                          "totalCents": 5200
+                        }
+                      }
+                    }
+                  },
+                  "NEG-01-1": {
+                    "summary": "NEG-01 · Envío gratis al alcanzar exactamente 90 EUR sin descuento",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 9000
+                        }
+                      }
+                    }
+                  },
+                  "NEG-02-1": {
+                    "summary": "NEG-02 · El descuento deja el neto por debajo del mínimo y vuelve a aplicar el envío",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-03-1": {
+                    "summary": "NEG-03 · El descuento y el envío gratis se combinan cuando el neto supera el mínimo",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 3,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 13500,
+                          "discountCents": 1350,
+                          "shippingCents": 0,
+                          "totalCents": 12150
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-04-2": {
+                    "summary": "NEG-04 · Rechazar cupón bajo el mínimo sin consumir stock ni guardar la clave",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-04-3": {
+                    "summary": "NEG-04 · Rechazar cupón bajo el mínimo sin consumir stock ni guardar la clave",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-2",
+                        "sku": "SKU-100",
+                        "quantity": 3,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 13500,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 13500
+                        }
+                      }
+                    }
+                  },
+                  "NEG-05-2": {
+                    "summary": "NEG-05 · Rechazar cupón desconocido y permitir el siguiente pedido válido",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 5,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 22500,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 22500
+                        }
+                      }
+                    }
+                  },
+                  "NEG-06-1": {
+                    "summary": "NEG-06 · Impedir el segundo uso activo del cupón sin reservar stock",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-06-3": {
+                    "summary": "NEG-06 · Impedir el segundo uso activo del cupón sin reservar stock",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-2",
+                        "sku": "SKU-100",
+                        "quantity": 3,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 13500,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 13500
+                        }
+                      }
+                    }
+                  },
+                  "NEG-07-1": {
+                    "summary": "NEG-07 · Cada comprador puede usar el cupón con su propia identidad",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-07-2": {
+                    "summary": "NEG-07 · Cada comprador puede usar el cupón con su propia identidad",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-2",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-08-1": {
+                    "summary": "NEG-08 · Cancelar libera el cupón y devuelve todo el stock de la reserva",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 5,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 22500,
+                          "discountCents": 2250,
+                          "shippingCents": 0,
+                          "totalCents": 20250
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-08-4": {
+                    "summary": "NEG-08 · Cancelar libera el cupón y devuelve todo el stock de la reserva",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-2",
+                        "sku": "SKU-100",
+                        "quantity": 5,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 22500,
+                          "discountCents": 2250,
+                          "shippingCents": 0,
+                          "totalCents": 20250
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-09-1": {
+                    "summary": "NEG-09 · Repetir la cancelación conserva el estado y no duplica el stock",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 5,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 22500,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 22500
+                        }
+                      }
+                    }
+                  },
+                  "NEG-09-3": {
+                    "summary": "NEG-09 · Repetir la cancelación conserva el estado y no duplica el stock",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-2",
+                        "sku": "SKU-100",
+                        "quantity": 5,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 22500,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 22500
+                        }
+                      }
+                    }
+                  },
+                  "NEG-10-1": {
+                    "summary": "NEG-10 · Una cancelación ajena o anónima no libera el pedido",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-11-1": {
+                    "summary": "NEG-11 · Reintentar la creación después de cancelar devuelve el mismo pedido cancelado",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-11-5": {
+                    "summary": "NEG-11 · Reintentar la creación después de cancelar devuelve el mismo pedido cancelado",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-2",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-12-1": {
+                    "summary": "NEG-12 · Cambiar solo el cupón con la misma clave da conflicto y conserva el pedido",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 9000
+                        }
+                      }
+                    }
+                  },
+                  "NEG-12-4": {
+                    "summary": "NEG-12 · Cambiar solo el cupón con la misma clave da conflicto y conserva el pedido",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-2",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-13-1": {
+                    "summary": "NEG-13 · Repetir una cancelación anterior no libera el cupón de un pedido nuevo",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-13-3": {
+                    "summary": "NEG-13 · Repetir una cancelación anterior no libera el cupón de un pedido nuevo",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-2",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
                       }
                     }
                   }
@@ -766,6 +1375,54 @@
                       "code": "OUT_OF_STOCK",
                       "message": "Stock insuficiente"
                     }
+                  },
+                  "NEG-06-2": {
+                    "summary": "NEG-06 · Impedir el segundo uso activo del cupón sin reservar stock",
+                    "value": {
+                      "result": "KO",
+                      "code": "COUPON_ALREADY_USED",
+                      "message": "El cupón ya está aplicado a un pedido confirmado"
+                    }
+                  },
+                  "NEG-08-2": {
+                    "summary": "NEG-08 · Cancelar libera el cupón y devuelve todo el stock de la reserva",
+                    "value": {
+                      "result": "KO",
+                      "code": "OUT_OF_STOCK",
+                      "message": "Stock insuficiente"
+                    }
+                  },
+                  "NEG-09-5": {
+                    "summary": "NEG-09 · Repetir la cancelación conserva el estado y no duplica el stock",
+                    "value": {
+                      "result": "KO",
+                      "code": "OUT_OF_STOCK",
+                      "message": "Stock insuficiente"
+                    }
+                  },
+                  "NEG-10-5": {
+                    "summary": "NEG-10 · Una cancelación ajena o anónima no libera el pedido",
+                    "value": {
+                      "result": "KO",
+                      "code": "COUPON_ALREADY_USED",
+                      "message": "El cupón ya está aplicado a un pedido confirmado"
+                    }
+                  },
+                  "NEG-12-2": {
+                    "summary": "NEG-12 · Cambiar solo el cupón con la misma clave da conflicto y conserva el pedido",
+                    "value": {
+                      "result": "KO",
+                      "code": "IDEMPOTENCY_CONFLICT",
+                      "message": "La clave ya se usó con otro pedido"
+                    }
+                  },
+                  "NEG-13-5": {
+                    "summary": "NEG-13 · Repetir una cancelación anterior no libera el cupón de un pedido nuevo",
+                    "value": {
+                      "result": "KO",
+                      "code": "COUPON_ALREADY_USED",
+                      "message": "El cupón ya está aplicado a un pedido confirmado"
+                    }
                   }
                 }
               }
@@ -882,6 +1539,22 @@
                       "code": "INVALID_ORDER",
                       "message": "Se requiere SKU y una cantidad entera entre 1 y 5"
                     }
+                  },
+                  "NEG-04-1": {
+                    "summary": "NEG-04 · Rechazar cupón bajo el mínimo sin consumir stock ni guardar la clave",
+                    "value": {
+                      "result": "KO",
+                      "code": "COUPON_MINIMUM_NOT_MET",
+                      "message": "El cupón requiere un subtotal de al menos 90 EUR"
+                    }
+                  },
+                  "NEG-05-1": {
+                    "summary": "NEG-05 · Rechazar cupón desconocido y permitir el siguiente pedido válido",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_COUPON",
+                      "message": "Cupón inválido"
+                    }
                   }
                 }
               }
@@ -912,7 +1585,7 @@
             "example": "ORD-1"
           }
         ],
-        "description": "Casos: [ORD-01](./casos.html#ORD-01) · [ORD-04](./casos.html#ORD-04) · [ORD-08](./casos.html#ORD-08) · [ORD-09](./casos.html#ORD-09) · [ORD-10](./casos.html#ORD-10)",
+        "description": "Casos: [ORD-01](./casos.html#ORD-01) · [ORD-04](./casos.html#ORD-04) · [ORD-08](./casos.html#ORD-08) · [ORD-09](./casos.html#ORD-09) · [ORD-10](./casos.html#ORD-10) · [NEG-02](./casos.html#NEG-02) · [NEG-10](./casos.html#NEG-10) · [NEG-12](./casos.html#NEG-12)",
         "responses": {
           "200": {
             "description": "Operación exitosa",
@@ -944,7 +1617,15 @@
                       "data": {
                         "id": "ORD-1",
                         "sku": "SKU-100",
-                        "quantity": 1
+                        "quantity": 1,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 4500,
+                          "discountCents": 0,
+                          "shippingCents": 700,
+                          "totalCents": 5200
+                        }
                       }
                     }
                   },
@@ -955,7 +1636,74 @@
                       "data": {
                         "id": "ORD-1",
                         "sku": "SKU-100",
-                        "quantity": 1
+                        "quantity": 1,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 4500,
+                          "discountCents": 0,
+                          "shippingCents": 700,
+                          "totalCents": 5200
+                        }
+                      }
+                    }
+                  },
+                  "NEG-02-2": {
+                    "summary": "NEG-02 · El descuento deja el neto por debajo del mínimo y vuelve a aplicar el envío",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-10-4": {
+                    "summary": "NEG-10 · Una cancelación ajena o anónima no libera el pedido",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-12-3": {
+                    "summary": "NEG-12 · Cambiar solo el cupón con la misma clave da conflicto y conserva el pedido",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CONFIRMED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 9000
+                        }
                       }
                     }
                   }
@@ -1009,6 +1757,226 @@
                   },
                   "ORD-10-1": {
                     "summary": "ORD-10 · Consultar un pedido inexistente",
+                    "value": {
+                      "result": "KO",
+                      "code": "ORDER_NOT_FOUND",
+                      "message": "Pedido inexistente"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Cancelar un pedido y liberar su reserva",
+        "security": [
+          {
+            "DemoBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "ORD-1"
+          }
+        ],
+        "description": "Solo el propietario puede cancelar. La primera cancelación devuelve el stock y libera el cupón. Las siguientes devuelven el mismo pedido cancelado.\n\nCasos: [NEG-08](./casos.html#NEG-08) · [NEG-09](./casos.html#NEG-09) · [NEG-10](./casos.html#NEG-10) · [NEG-11](./casos.html#NEG-11) · [NEG-13](./casos.html#NEG-13)",
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "result",
+                    "data"
+                  ],
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "enum": [
+                        "OK"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Order"
+                    }
+                  }
+                },
+                "examples": {
+                  "NEG-08-3": {
+                    "summary": "NEG-08 · Cancelar libera el cupón y devuelve todo el stock de la reserva",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 5,
+                        "status": "CANCELLED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 22500,
+                          "discountCents": 2250,
+                          "shippingCents": 0,
+                          "totalCents": 20250
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-09-2": {
+                    "summary": "NEG-09 · Repetir la cancelación conserva el estado y no duplica el stock",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 5,
+                        "status": "CANCELLED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 22500,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 22500
+                        }
+                      }
+                    }
+                  },
+                  "NEG-09-4": {
+                    "summary": "NEG-09 · Repetir la cancelación conserva el estado y no duplica el stock",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 5,
+                        "status": "CANCELLED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 22500,
+                          "discountCents": 0,
+                          "shippingCents": 0,
+                          "totalCents": 22500
+                        }
+                      }
+                    }
+                  },
+                  "NEG-11-3": {
+                    "summary": "NEG-11 · Reintentar la creación después de cancelar devuelve el mismo pedido cancelado",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CANCELLED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-13-2": {
+                    "summary": "NEG-13 · Repetir una cancelación anterior no libera el cupón de un pedido nuevo",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CANCELLED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  },
+                  "NEG-13-4": {
+                    "summary": "NEG-13 · Repetir una cancelación anterior no libera el cupón de un pedido nuevo",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 2,
+                        "status": "CANCELLED",
+                        "pricing": {
+                          "currency": "EUR",
+                          "subtotalCents": 9000,
+                          "discountCents": 900,
+                          "shippingCents": 700,
+                          "totalCents": 8800
+                        },
+                        "coupon": "DEMO10"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente o inválido",
+            "headers": {
+              "www-authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Bearer"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "NEG-10-2": {
+                    "summary": "NEG-10 · Una cancelación ajena o anónima no libera el pedido",
+                    "value": {
+                      "result": "KO",
+                      "code": "UNAUTHORIZED",
+                      "message": "Token ausente o inválido"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "NEG-10-3": {
+                    "summary": "NEG-10 · Una cancelación ajena o anónima no libera el pedido",
                     "value": {
                       "result": "KO",
                       "code": "ORDER_NOT_FOUND",
@@ -1213,7 +2181,9 @@
         "required": [
           "id",
           "sku",
-          "quantity"
+          "quantity",
+          "status",
+          "pricing"
         ],
         "properties": {
           "id": {
@@ -1226,6 +2196,55 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 5
+          },
+          "coupon": {
+            "type": "string",
+            "description": "DEMO10 aplica 10 % desde un subtotal de 90 EUR."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CONFIRMED",
+              "CANCELLED"
+            ]
+          },
+          "pricing": {
+            "$ref": "#/components/schemas/Pricing"
+          }
+        }
+      },
+      "Pricing": {
+        "type": "object",
+        "description": "Importes en céntimos de euro.",
+        "required": [
+          "currency",
+          "subtotalCents",
+          "discountCents",
+          "shippingCents",
+          "totalCents"
+        ],
+        "properties": {
+          "currency": {
+            "type": "string",
+            "enum": [
+              "EUR"
+            ]
+          },
+          "subtotalCents": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "discountCents": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "shippingCents": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalCents": {
+            "type": "integer",
+            "minimum": 0
           }
         }
       },

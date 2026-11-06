@@ -9,7 +9,7 @@ summary{cursor:pointer} tr:target{outline:2px solid #095bb5;background:#eaf4ff} 
 </style>
 <nav><a href="./">Swagger UI</a> · <a href="./openapi.json">OpenAPI JSON</a></nav>
 <main><h1>Matriz de pruebas de API</h1>
-<p>39 casos black-box, 4 de smoke. Abre un caso para ver la solicitud y la respuesta esperada.</p>
+<p>52 casos black-box, 4 de smoke. Abre un caso para ver la solicitud y la respuesta esperada.</p>
 <p>Cada caso automatizado parte del stock inicial y un servidor vacío. En una prueba manual, reinicia el laboratorio entre casos que modifiquen stock. Los casos de rutas o métodos inexistentes se ejecutan desde la suite HTTP.</p>
 <div class="table"><table><thead><tr><th>ID</th><th>Flujo</th><th>Suite</th><th>Caso y pasos</th></tr></thead><tbody>
 <tr id="CAT-01"><th scope="row">CAT-01</th><td>Happy</td><td>Smoke y regresión</td><td><details><summary>Estado operativo del servicio <strong>(200)</strong></summary><pre>GET /api/health
@@ -144,7 +144,15 @@ location: /api/orders/ORD-1
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre></details></td></tr>
 <tr id="RED-04"><th scope="row">RED-04</th><td>Happy</td><td>Regresión</td><td><details><summary>Checkout legado preserva POST y cuerpo <strong>(308 → 201)</strong></summary><pre>POST /api/checkout-v1
@@ -176,7 +184,15 @@ location: /api/orders/ORD-1
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre></details></td></tr>
 <tr id="ORD-01"><th scope="row">ORD-01</th><td>Happy</td><td>Smoke y regresión</td><td><details><summary>Crear pedido y consultarlo como propietario <strong>(201 → 200)</strong></summary><pre>POST /api/orders
@@ -195,7 +211,15 @@ location: /api/orders/ORD-1
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre><pre>GET /api/orders/ORD-1
 authorization: Bearer demo-buyer
@@ -209,7 +233,15 @@ HTTP 200
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre></details></td></tr>
 <tr id="ORD-02"><th scope="row">ORD-02</th><td>Happy</td><td>Regresión</td><td><details><summary>Aceptar cantidad máxima y consumir el stock <strong>(201 → 409)</strong></summary><pre>POST /api/orders
@@ -228,7 +260,15 @@ location: /api/orders/ORD-1
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 5
+    "quantity": 5,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 22500,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 22500
+    }
   }
 }</pre><pre>POST /api/orders
 authorization: Bearer demo-buyer
@@ -262,7 +302,15 @@ location: /api/orders/ORD-1
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre><pre>POST /api/orders
 authorization: Bearer demo-buyer
@@ -281,7 +329,15 @@ idempotency-replayed: true
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre><pre>POST /api/orders
 authorization: Bearer demo-buyer
@@ -299,7 +355,15 @@ location: /api/orders/ORD-2
   "data": {
     "id": "ORD-2",
     "sku": "SKU-100",
-    "quantity": 4
+    "quantity": 4,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 18000,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 18000
+    }
   }
 }</pre></details></td></tr>
 <tr id="ORD-04"><th scope="row">ORD-04</th><td>Bad</td><td>Regresión</td><td><details><summary>Clave reutilizada con otro payload produce conflicto <strong>(201 → 409 → 200)</strong></summary><pre>POST /api/orders
@@ -319,7 +383,15 @@ location: /api/orders/ORD-1
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre><pre>POST /api/orders
 authorization: Bearer demo-buyer
@@ -348,7 +420,15 @@ HTTP 200
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre></details></td></tr>
 <tr id="ORD-05"><th scope="row">ORD-05</th><td>Happy</td><td>Regresión</td><td><details><summary>La misma clave se puede usar con otra identidad <strong>(201 → 201)</strong></summary><pre>POST /api/orders
@@ -368,7 +448,15 @@ location: /api/orders/ORD-1
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre><pre>POST /api/orders
 authorization: Bearer demo-other
@@ -387,7 +475,15 @@ location: /api/orders/ORD-2
   "data": {
     "id": "ORD-2",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre></details></td></tr>
 <tr id="ORD-06"><th scope="row">ORD-06</th><td>Bad</td><td>Regresión</td><td><details><summary>El lector no puede crear pedidos <strong>(403)</strong></summary><pre>POST /api/orders
@@ -449,7 +545,15 @@ location: /api/orders/ORD-1
   "data": {
     "id": "ORD-1",
     "sku": "SKU-100",
-    "quantity": 1
+    "quantity": 1,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 4500,
+      "discountCents": 0,
+      "shippingCents": 700,
+      "totalCents": 5200
+    }
   }
 }</pre><pre>GET /api/orders/ORD-1
 authorization: Bearer demo-other
@@ -693,6 +797,978 @@ HTTP 422
   "result": "KO",
   "code": "INVALID_ORDER",
   "message": "Se requiere SKU y una cantidad entera entre 1 y 5"
+}</pre></details></td></tr>
+<tr id="NEG-01"><th scope="row">NEG-01</th><td>Happy</td><td>Regresión</td><td><details><summary>Envío gratis al alcanzar exactamente 90 EUR sin descuento <strong>(201)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 9000
+    }
+  }
+}</pre></details></td></tr>
+<tr id="NEG-02"><th scope="row">NEG-02</th><td>Happy</td><td>Regresión</td><td><details><summary>El descuento deja el neto por debajo del mínimo y vuelve a aplicar el envío <strong>(201 → 200)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>GET /api/orders/ORD-1
+authorization: Bearer demo-buyer
+
+→
+
+HTTP 200
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre></details></td></tr>
+<tr id="NEG-03"><th scope="row">NEG-03</th><td>Happy</td><td>Regresión</td><td><details><summary>El descuento y el envío gratis se combinan cuando el neto supera el mínimo <strong>(201)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":3,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 3,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 13500,
+      "discountCents": 1350,
+      "shippingCents": 0,
+      "totalCents": 12150
+    },
+    "coupon": "DEMO10"
+  }
+}</pre></details></td></tr>
+<tr id="NEG-04"><th scope="row">NEG-04</th><td>Bad</td><td>Regresión</td><td><details><summary>Rechazar cupón bajo el mínimo sin consumir stock ni guardar la clave <strong>(422 → 201 → 201)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+idempotency-key: qa-001
+
+{"sku":"SKU-100","quantity":1,"coupon":"DEMO10"}
+
+→
+
+HTTP 422
+
+{
+  "result": "KO",
+  "code": "COUPON_MINIMUM_NOT_MET",
+  "message": "El cupón requiere un subtotal de al menos 90 EUR"
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+idempotency-key: qa-001
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":3}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-2
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-2",
+    "sku": "SKU-100",
+    "quantity": 3,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 13500,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 13500
+    }
+  }
+}</pre></details></td></tr>
+<tr id="NEG-05"><th scope="row">NEG-05</th><td>Bad</td><td>Regresión</td><td><details><summary>Rechazar cupón desconocido y permitir el siguiente pedido válido <strong>(422 → 201)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"INEXISTENTE"}
+
+→
+
+HTTP 422
+
+{
+  "result": "KO",
+  "code": "INVALID_COUPON",
+  "message": "Cupón inválido"
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":5}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 5,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 22500,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 22500
+    }
+  }
+}</pre></details></td></tr>
+<tr id="NEG-06"><th scope="row">NEG-06</th><td>Bad</td><td>Regresión</td><td><details><summary>Impedir el segundo uso activo del cupón sin reservar stock <strong>(201 → 409 → 201)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 409
+
+{
+  "result": "KO",
+  "code": "COUPON_ALREADY_USED",
+  "message": "El cupón ya está aplicado a un pedido confirmado"
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":3}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-2
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-2",
+    "sku": "SKU-100",
+    "quantity": 3,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 13500,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 13500
+    }
+  }
+}</pre></details></td></tr>
+<tr id="NEG-07"><th scope="row">NEG-07</th><td>Happy</td><td>Regresión</td><td><details><summary>Cada comprador puede usar el cupón con su propia identidad <strong>(201 → 201)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-other
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-2
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-2",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre></details></td></tr>
+<tr id="NEG-08"><th scope="row">NEG-08</th><td>Happy</td><td>Regresión</td><td><details><summary>Cancelar libera el cupón y devuelve todo el stock de la reserva <strong>(201 → 409 → 200 → 201)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":5,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 5,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 22500,
+      "discountCents": 2250,
+      "shippingCents": 0,
+      "totalCents": 20250
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 409
+
+{
+  "result": "KO",
+  "code": "OUT_OF_STOCK",
+  "message": "Stock insuficiente"
+}</pre><pre>POST /api/orders/ORD-1/cancel
+authorization: Bearer demo-buyer
+
+→
+
+HTTP 200
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 5,
+    "status": "CANCELLED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 22500,
+      "discountCents": 2250,
+      "shippingCents": 0,
+      "totalCents": 20250
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":5,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-2
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-2",
+    "sku": "SKU-100",
+    "quantity": 5,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 22500,
+      "discountCents": 2250,
+      "shippingCents": 0,
+      "totalCents": 20250
+    },
+    "coupon": "DEMO10"
+  }
+}</pre></details></td></tr>
+<tr id="NEG-09"><th scope="row">NEG-09</th><td>Happy</td><td>Regresión</td><td><details><summary>Repetir la cancelación conserva el estado y no duplica el stock <strong>(201 → 200 → 201 → 200 → 409)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":5}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 5,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 22500,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 22500
+    }
+  }
+}</pre><pre>POST /api/orders/ORD-1/cancel
+authorization: Bearer demo-buyer
+
+→
+
+HTTP 200
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 5,
+    "status": "CANCELLED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 22500,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 22500
+    }
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":5}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-2
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-2",
+    "sku": "SKU-100",
+    "quantity": 5,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 22500,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 22500
+    }
+  }
+}</pre><pre>POST /api/orders/ORD-1/cancel
+authorization: Bearer demo-buyer
+
+→
+
+HTTP 200
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 5,
+    "status": "CANCELLED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 22500,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 22500
+    }
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":1}
+
+→
+
+HTTP 409
+
+{
+  "result": "KO",
+  "code": "OUT_OF_STOCK",
+  "message": "Stock insuficiente"
+}</pre></details></td></tr>
+<tr id="NEG-10"><th scope="row">NEG-10</th><td>Bad</td><td>Regresión</td><td><details><summary>Una cancelación ajena o anónima no libera el pedido <strong>(201 → 401 → 404 → 200 → 409)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders/ORD-1/cancel
+
+→
+
+HTTP 401
+www-authenticate: Bearer
+
+{
+  "result": "KO",
+  "code": "UNAUTHORIZED",
+  "message": "Token ausente o inválido"
+}</pre><pre>POST /api/orders/ORD-1/cancel
+authorization: Bearer demo-other
+
+→
+
+HTTP 404
+
+{
+  "result": "KO",
+  "code": "ORDER_NOT_FOUND",
+  "message": "Pedido inexistente"
+}</pre><pre>GET /api/orders/ORD-1
+authorization: Bearer demo-buyer
+
+→
+
+HTTP 200
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 409
+
+{
+  "result": "KO",
+  "code": "COUPON_ALREADY_USED",
+  "message": "El cupón ya está aplicado a un pedido confirmado"
+}</pre></details></td></tr>
+<tr id="NEG-11"><th scope="row">NEG-11</th><td>Happy</td><td>Regresión</td><td><details><summary>Reintentar la creación después de cancelar devuelve el mismo pedido cancelado <strong>(201 → 200 → 200 → 200 → 201)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+idempotency-key: qa-001
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+idempotency-key: qa-001
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 200
+idempotency-replayed: true
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders/ORD-1/cancel
+authorization: Bearer demo-buyer
+
+→
+
+HTTP 200
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CANCELLED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+idempotency-key: qa-001
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 200
+idempotency-replayed: true
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CANCELLED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-2
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-2",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre></details></td></tr>
+<tr id="NEG-12"><th scope="row">NEG-12</th><td>Bad</td><td>Regresión</td><td><details><summary>Cambiar solo el cupón con la misma clave da conflicto y conserva el pedido <strong>(201 → 409 → 200 → 201)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+idempotency-key: qa-001
+
+{"sku":"SKU-100","quantity":2}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 9000
+    }
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+idempotency-key: qa-001
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 409
+
+{
+  "result": "KO",
+  "code": "IDEMPOTENCY_CONFLICT",
+  "message": "La clave ya se usó con otro pedido"
+}</pre><pre>GET /api/orders/ORD-1
+authorization: Bearer demo-buyer
+
+→
+
+HTTP 200
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 0,
+      "shippingCents": 0,
+      "totalCents": 9000
+    }
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-2
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-2",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre></details></td></tr>
+<tr id="NEG-13"><th scope="row">NEG-13</th><td>Happy</td><td>Regresión</td><td><details><summary>Repetir una cancelación anterior no libera el cupón de un pedido nuevo <strong>(201 → 200 → 201 → 200 → 409)</strong></summary><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-1
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders/ORD-1/cancel
+authorization: Bearer demo-buyer
+
+→
+
+HTTP 200
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CANCELLED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 201
+location: /api/orders/ORD-2
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-2",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CONFIRMED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders/ORD-1/cancel
+authorization: Bearer demo-buyer
+
+→
+
+HTTP 200
+
+{
+  "result": "OK",
+  "data": {
+    "id": "ORD-1",
+    "sku": "SKU-100",
+    "quantity": 2,
+    "status": "CANCELLED",
+    "pricing": {
+      "currency": "EUR",
+      "subtotalCents": 9000,
+      "discountCents": 900,
+      "shippingCents": 700,
+      "totalCents": 8800
+    },
+    "coupon": "DEMO10"
+  }
+}</pre><pre>POST /api/orders
+authorization: Bearer demo-buyer
+content-type: application/json
+
+{"sku":"SKU-100","quantity":2,"coupon":"DEMO10"}
+
+→
+
+HTTP 409
+
+{
+  "result": "KO",
+  "code": "COUPON_ALREADY_USED",
+  "message": "El cupón ya está aplicado a un pedido confirmado"
 }</pre></details></td></tr>
 <tr id="RES-01"><th scope="row">RES-01</th><td>Bad</td><td>Regresión</td><td><details><summary>Error interno controlado <strong>(500 → 200)</strong></summary><pre>GET /api/lab/fault?scenario=internal
 

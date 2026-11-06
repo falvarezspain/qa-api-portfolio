@@ -1,11 +1,21 @@
 const auth = { authorization: 'Bearer demo-buyer' };
 const json = { ...auth, 'content-type': 'application/json' };
 const product = { sku: 'SKU-100', quantity: 1 };
-const order = { id: 'ORD-1', ...product };
+const priced = (id, quantity, subtotalCents, discountCents, shippingCents, totalCents) => ({
+  id: 'ORD-' + id, sku: product.sku, quantity, status: 'CONFIRMED',
+  pricing: { currency: 'EUR', subtotalCents, discountCents, shippingCents, totalCents },
+});
+const order = priced(1, 1, 4500, 0, 700, 5200);
+const twoUnits = priced(1, 2, 9000, 0, 0, 9000);
+const fiveUnits = priced(1, 5, 22500, 0, 0, 22500);
+const discounted = { ...priced(1, 2, 9000, 900, 700, 8800), coupon: 'DEMO10' };
+const promotion = { ...product, quantity: 2, coupon: 'DEMO10' };
+const cancelled = data => ({ ...data, status: 'CANCELLED' });
 const catalog = [{ id: 'SKU-100', name: 'Teclado', stock: 5 }, { id: 'SKU-200', name: 'Ratón', stock: 0 }];
 
 const get = (path, headers) => ({ method: 'GET', path, headers });
 const post = (body = product, headers = json, path = '/api/orders') => ({ method: 'POST', path, headers, body });
+const cancel = (id, headers = auth) => ({ method: 'POST', path: '/api/orders/ORD-' + id + '/cancel', headers });
 const success = (status, data, headers) => ({ status, body: { result: 'OK', data }, headers });
 const error = (status, code, message, headers) => ({ status, body: { result: 'KO', code, message }, headers });
 const empty = (status, headers) => ({ status, headers, body: null });
@@ -39,12 +49,12 @@ export const cases = [
   ['ORD-01', 'Crear pedido y consultarlo como propietario', 'Happy', true,
     [post(), created()], [get('/api/orders/ORD-1', auth), success(200, order)]],
   ['ORD-02', 'Aceptar cantidad máxima y consumir el stock', 'Happy', false,
-    [post({ ...product, quantity: 5 }), created({ ...order, quantity: 5 })],
+    [post({ ...product, quantity: 5 }), created(fiveUnits)],
     [post(), outOfStock]],
   ['ORD-03', 'Reintento idempotente conserva ID y stock', 'Happy', false,
     [post(product, keyed), created()],
     [post(product, keyed), success(200, order, { 'idempotency-replayed': 'true' })],
-    [post({ ...product, quantity: 4 }), created({ ...order, id: 'ORD-2', quantity: 4 })]],
+    [post({ ...product, quantity: 4 }), created(priced(2, 4, 18000, 0, 0, 18000))]],
   ['ORD-04', 'Clave reutilizada con otro payload produce conflicto', 'Bad', false,
     [post(product, keyed), created()],
     [post({ ...product, quantity: 2 }, keyed), error(409, 'IDEMPOTENCY_CONFLICT', 'La clave ya se usó con otro pedido')],
@@ -87,6 +97,64 @@ export const cases = [
     ['24', 'Cuerpo null', null],
     ['25', 'Cantidad negativa', { ...product, quantity: -1 }],
   ].map(([id, title, body]) => ['ORD-' + id, title, 'Bad', false, [post(body), invalid]]),
+  ['NEG-01', 'Envío gratis al alcanzar exactamente 90 EUR sin descuento', 'Happy', false,
+    [post({ ...product, quantity: 2 }), created(twoUnits)]],
+  ['NEG-02', 'El descuento deja el neto por debajo del mínimo y vuelve a aplicar el envío', 'Happy', false,
+    [post(promotion), created(discounted)],
+    [get('/api/orders/ORD-1', auth), success(200, discounted)]],
+  ['NEG-03', 'El descuento y el envío gratis se combinan cuando el neto supera el mínimo', 'Happy', false,
+    [post({ ...promotion, quantity: 3 }), created({
+      ...priced(1, 3, 13500, 1350, 0, 12150), coupon: 'DEMO10',
+    })]],
+  ['NEG-04', 'Rechazar cupón bajo el mínimo sin consumir stock ni guardar la clave', 'Bad', false,
+    [post({ ...promotion, quantity: 1 }, keyed),
+      error(422, 'COUPON_MINIMUM_NOT_MET', 'El cupón requiere un subtotal de al menos 90 EUR')],
+    [post(promotion, keyed), created(discounted)],
+    [post({ ...product, quantity: 3 }), created(priced(2, 3, 13500, 0, 0, 13500))]],
+  ['NEG-05', 'Rechazar cupón desconocido y permitir el siguiente pedido válido', 'Bad', false,
+    [post({ ...promotion, coupon: 'INEXISTENTE' }), error(422, 'INVALID_COUPON', 'Cupón inválido')],
+    [post({ ...product, quantity: 5 }), created(fiveUnits)]],
+  ['NEG-06', 'Impedir el segundo uso activo del cupón sin reservar stock', 'Bad', false,
+    [post(promotion), created(discounted)],
+    [post(promotion), error(409, 'COUPON_ALREADY_USED', 'El cupón ya está aplicado a un pedido confirmado')],
+    [post({ ...product, quantity: 3 }), created(priced(2, 3, 13500, 0, 0, 13500))]],
+  ['NEG-07', 'Cada comprador puede usar el cupón con su propia identidad', 'Happy', false,
+    [post(promotion), created(discounted)],
+    [post(promotion, { ...json, authorization: 'Bearer demo-other' }), created({ ...discounted, id: 'ORD-2' })]],
+  ['NEG-08', 'Cancelar libera el cupón y devuelve todo el stock de la reserva', 'Happy', false,
+    [post({ ...promotion, quantity: 5 }), created({ ...priced(1, 5, 22500, 2250, 0, 20250), coupon: 'DEMO10' })],
+    [post(promotion), outOfStock],
+    [cancel(1), success(200, cancelled({ ...priced(1, 5, 22500, 2250, 0, 20250), coupon: 'DEMO10' }))],
+    [post({ ...promotion, quantity: 5 }), created({ ...priced(2, 5, 22500, 2250, 0, 20250), coupon: 'DEMO10' })]],
+  ['NEG-09', 'Repetir la cancelación conserva el estado y no duplica el stock', 'Happy', false,
+    [post({ ...product, quantity: 5 }), created(fiveUnits)],
+    [cancel(1), success(200, cancelled(fiveUnits))],
+    [post({ ...product, quantity: 5 }), created({ ...fiveUnits, id: 'ORD-2' })],
+    [cancel(1), success(200, cancelled(fiveUnits))],
+    [post(), outOfStock]],
+  ['NEG-10', 'Una cancelación ajena o anónima no libera el pedido', 'Bad', false,
+    [post(promotion), created(discounted)],
+    [cancel(1, {}), unauthorized],
+    [cancel(1, { authorization: 'Bearer demo-other' }), missing],
+    [get('/api/orders/ORD-1', auth), success(200, discounted)],
+    [post(promotion), error(409, 'COUPON_ALREADY_USED', 'El cupón ya está aplicado a un pedido confirmado')]],
+  ['NEG-11', 'Reintentar la creación después de cancelar devuelve el mismo pedido cancelado', 'Happy', false,
+    [post(promotion, keyed), created(discounted)],
+    [post(promotion, keyed), success(200, discounted, { 'idempotency-replayed': 'true' })],
+    [cancel(1), success(200, cancelled(discounted))],
+    [post(promotion, keyed), success(200, cancelled(discounted), { 'idempotency-replayed': 'true' })],
+    [post(promotion), created({ ...discounted, id: 'ORD-2' })]],
+  ['NEG-12', 'Cambiar solo el cupón con la misma clave da conflicto y conserva el pedido', 'Bad', false,
+    [post({ ...product, quantity: 2 }, keyed), created(twoUnits)],
+    [post(promotion, keyed), error(409, 'IDEMPOTENCY_CONFLICT', 'La clave ya se usó con otro pedido')],
+    [get('/api/orders/ORD-1', auth), success(200, twoUnits)],
+    [post(promotion), created({ ...discounted, id: 'ORD-2' })]],
+  ['NEG-13', 'Repetir una cancelación anterior no libera el cupón de un pedido nuevo', 'Happy', false,
+    [post(promotion), created(discounted)],
+    [cancel(1), success(200, cancelled(discounted))],
+    [post(promotion), created({ ...discounted, id: 'ORD-2' })],
+    [cancel(1), success(200, cancelled(discounted))],
+    [post(promotion), error(409, 'COUPON_ALREADY_USED', 'El cupón ya está aplicado a un pedido confirmado')]],
   ['RES-01', 'Error interno controlado', 'Bad', false,
     [get('/api/lab/fault?scenario=internal'), error(500, 'INTERNAL_ERROR', 'Error interno simulado')],
     [get('/api/health'), success(200, { status: 'up' })]],
