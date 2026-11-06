@@ -1,0 +1,1254 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "QA API Portfolio · Tienda demo",
+    "version": "1.0.0",
+    "description": "Laboratorio de pruebas black-box. [Ver matriz y pasos](./casos.html). Usa **Authorize** e ingresa `demo-buyer` para crear pedidos, `demo-reader` para probar permisos o `demo-other` para verificar aislamiento. Reinicia el servidor para recuperar el stock inicial. El navegador puede seguir las redirecciones automáticamente."
+  },
+  "servers": [
+    {
+      "url": "."
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Comprobar estado operativo",
+        "description": "Casos: [CAT-01](./casos.html#CAT-01) · [RES-01](./casos.html#RES-01)",
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "result",
+                    "data"
+                  ],
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "enum": [
+                        "OK"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "status"
+                      ],
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "up"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "CAT-01-1": {
+                    "summary": "CAT-01 · Estado operativo del servicio",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "status": "up"
+                      }
+                    }
+                  },
+                  "RES-01-2": {
+                    "summary": "RES-01 · Error interno controlado",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "status": "up"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Consultar catálogo y caché",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "If-None-Match",
+            "description": "Envíalo para validar el snapshot del catálogo.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "\"catalog-v1\""
+          }
+        ],
+        "description": "Casos: [CAT-02](./casos.html#CAT-02) · [CAT-03](./casos.html#CAT-03) · [CAT-04](./casos.html#CAT-04) · [RED-01](./casos.html#RED-01)",
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "headers": {
+              "etag": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "\"catalog-v1\""
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "result",
+                    "data"
+                  ],
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "enum": [
+                        "OK"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "CAT-02-1": {
+                    "summary": "CAT-02 · Catálogo con datos y ETag",
+                    "value": {
+                      "result": "OK",
+                      "data": [
+                        {
+                          "id": "SKU-100",
+                          "name": "Teclado",
+                          "stock": 5
+                        },
+                        {
+                          "id": "SKU-200",
+                          "name": "Ratón",
+                          "stock": 0
+                        }
+                      ]
+                    }
+                  },
+                  "CAT-04-1": {
+                    "summary": "CAT-04 · Caché obsoleta recibe el catálogo completo",
+                    "value": {
+                      "result": "OK",
+                      "data": [
+                        {
+                          "id": "SKU-100",
+                          "name": "Teclado",
+                          "stock": 5
+                        },
+                        {
+                          "id": "SKU-200",
+                          "name": "Ratón",
+                          "stock": 0
+                        }
+                      ]
+                    }
+                  },
+                  "RED-01-2": {
+                    "summary": "RED-01 · Catálogo antiguo redirige de forma permanente",
+                    "value": {
+                      "result": "OK",
+                      "data": [
+                        {
+                          "id": "SKU-100",
+                          "name": "Teclado",
+                          "stock": 5
+                        },
+                        {
+                          "id": "SKU-200",
+                          "name": "Ratón",
+                          "stock": 0
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Snapshot sin cambios",
+            "headers": {
+              "etag": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "\"catalog-v1\""
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog": {
+      "get": {
+        "tags": [
+          "Redirecciones"
+        ],
+        "summary": "Consultar el catálogo por su ruta anterior",
+        "description": "Casos: [RED-01](./casos.html#RED-01)",
+        "responses": {
+          "301": {
+            "description": "Redirección permanente",
+            "headers": {
+              "location": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "/api/products"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/promotions": {
+      "get": {
+        "tags": [
+          "Redirecciones"
+        ],
+        "summary": "Consultar la ruta temporal de promociones",
+        "description": "Casos: [RED-02](./casos.html#RED-02)",
+        "responses": {
+          "302": {
+            "description": "Redirección temporal",
+            "headers": {
+              "location": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "/api/products"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/checkout": {
+      "post": {
+        "tags": [
+          "Redirecciones"
+        ],
+        "summary": "Redirigir checkout temporal",
+        "security": [
+          {
+            "DemoBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sku",
+                  "quantity"
+                ],
+                "properties": {
+                  "sku": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                }
+              },
+              "examples": {
+                "valid": {
+                  "summary": "Pedido válido",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 1
+                  }
+                },
+                "noStock": {
+                  "summary": "Producto sin stock",
+                  "value": {
+                    "sku": "SKU-200",
+                    "quantity": 1
+                  }
+                },
+                "invalid": {
+                  "summary": "Cantidad fuera de rango",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 0
+                  }
+                },
+                "malformed": {
+                  "summary": "JSON malformado",
+                  "value": "{\"sku\":"
+                }
+              }
+            }
+          }
+        },
+        "description": "Casos: [RED-03](./casos.html#RED-03)",
+        "responses": {
+          "307": {
+            "description": "Redirección temporal con el mismo método",
+            "headers": {
+              "location": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "/api/orders"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/checkout-v1": {
+      "post": {
+        "tags": [
+          "Redirecciones"
+        ],
+        "summary": "Redirigir checkout legado",
+        "security": [
+          {
+            "DemoBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sku",
+                  "quantity"
+                ],
+                "properties": {
+                  "sku": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                }
+              },
+              "examples": {
+                "valid": {
+                  "summary": "Pedido válido",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 1
+                  }
+                },
+                "noStock": {
+                  "summary": "Producto sin stock",
+                  "value": {
+                    "sku": "SKU-200",
+                    "quantity": 1
+                  }
+                },
+                "invalid": {
+                  "summary": "Cantidad fuera de rango",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 0
+                  }
+                },
+                "malformed": {
+                  "summary": "JSON malformado",
+                  "value": "{\"sku\":"
+                }
+              }
+            }
+          }
+        },
+        "description": "Casos: [RED-04](./casos.html#RED-04)",
+        "responses": {
+          "308": {
+            "description": "Redirección permanente con el mismo método",
+            "headers": {
+              "location": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "/api/orders"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Crear un pedido o repetirlo con la misma clave",
+        "security": [
+          {
+            "DemoBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sku",
+                  "quantity"
+                ],
+                "properties": {
+                  "sku": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                }
+              },
+              "examples": {
+                "valid": {
+                  "summary": "Pedido válido",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 1
+                  }
+                },
+                "noStock": {
+                  "summary": "Producto sin stock",
+                  "value": {
+                    "sku": "SKU-200",
+                    "quantity": 1
+                  }
+                },
+                "invalid": {
+                  "summary": "Cantidad fuera de rango",
+                  "value": {
+                    "sku": "SKU-100",
+                    "quantity": 0
+                  }
+                },
+                "malformed": {
+                  "summary": "JSON malformado",
+                  "value": "{\"sku\":"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "description": "Si se incluye, permite repetir un pedido por identidad.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "qa-001"
+          }
+        ],
+        "description": "Casos: [ORD-01](./casos.html#ORD-01) · [ORD-02](./casos.html#ORD-02) · [ORD-03](./casos.html#ORD-03) · [ORD-04](./casos.html#ORD-04) · [ORD-05](./casos.html#ORD-05) · [ORD-06](./casos.html#ORD-06) · [ORD-07](./casos.html#ORD-07) · [ORD-09](./casos.html#ORD-09) · [ORD-11](./casos.html#ORD-11) · [ORD-12](./casos.html#ORD-12) · [ORD-13](./casos.html#ORD-13) · [ORD-14](./casos.html#ORD-14) · [ORD-15](./casos.html#ORD-15) · [ORD-18](./casos.html#ORD-18) · [ORD-19](./casos.html#ORD-19) · [ORD-20](./casos.html#ORD-20) · [ORD-21](./casos.html#ORD-21) · [ORD-22](./casos.html#ORD-22) · [ORD-23](./casos.html#ORD-23) · [ORD-24](./casos.html#ORD-24) · [ORD-25](./casos.html#ORD-25)",
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "headers": {
+              "idempotency-replayed": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "true"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "result",
+                    "data"
+                  ],
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "enum": [
+                        "OK"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Order"
+                    }
+                  }
+                },
+                "examples": {
+                  "ORD-03-2": {
+                    "summary": "ORD-03 · Reintento idempotente conserva ID y stock",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 1
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Pedido creado",
+            "headers": {
+              "location": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "/api/orders/ORD-1"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "result",
+                    "data"
+                  ],
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "enum": [
+                        "OK"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Order"
+                    }
+                  }
+                },
+                "examples": {
+                  "ORD-01-1": {
+                    "summary": "ORD-01 · Crear pedido y consultarlo como propietario",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 1
+                      }
+                    }
+                  },
+                  "ORD-02-1": {
+                    "summary": "ORD-02 · Aceptar cantidad máxima y consumir el stock",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 5
+                      }
+                    }
+                  },
+                  "ORD-03-1": {
+                    "summary": "ORD-03 · Reintento idempotente conserva ID y stock",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 1
+                      }
+                    }
+                  },
+                  "ORD-03-3": {
+                    "summary": "ORD-03 · Reintento idempotente conserva ID y stock",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-2",
+                        "sku": "SKU-100",
+                        "quantity": 4
+                      }
+                    }
+                  },
+                  "ORD-04-1": {
+                    "summary": "ORD-04 · Clave reutilizada con otro payload produce conflicto",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 1
+                      }
+                    }
+                  },
+                  "ORD-05-1": {
+                    "summary": "ORD-05 · La misma clave se puede usar con otra identidad",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 1
+                      }
+                    }
+                  },
+                  "ORD-05-2": {
+                    "summary": "ORD-05 · La misma clave se puede usar con otra identidad",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-2",
+                        "sku": "SKU-100",
+                        "quantity": 1
+                      }
+                    }
+                  },
+                  "ORD-09-1": {
+                    "summary": "ORD-09 · Otro usuario no puede consultar el pedido",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 1
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "ORD-13-1": {
+                    "summary": "ORD-13 · JSON malformado",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_JSON",
+                      "message": "JSON malformado"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente o inválido",
+            "headers": {
+              "www-authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Bearer"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "ORD-07-1": {
+                    "summary": "ORD-07 · Creación sin token",
+                    "value": {
+                      "result": "KO",
+                      "code": "UNAUTHORIZED",
+                      "message": "Token ausente o inválido"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permiso insuficiente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "ORD-06-1": {
+                    "summary": "ORD-06 · El lector no puede crear pedidos",
+                    "value": {
+                      "result": "KO",
+                      "code": "FORBIDDEN",
+                      "message": "El perfil no puede crear pedidos"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "ORD-11-1": {
+                    "summary": "ORD-11 · Producto inexistente",
+                    "value": {
+                      "result": "KO",
+                      "code": "SKU_NOT_FOUND",
+                      "message": "Producto inexistente"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "ORD-02-2": {
+                    "summary": "ORD-02 · Aceptar cantidad máxima y consumir el stock",
+                    "value": {
+                      "result": "KO",
+                      "code": "OUT_OF_STOCK",
+                      "message": "Stock insuficiente"
+                    }
+                  },
+                  "ORD-04-2": {
+                    "summary": "ORD-04 · Clave reutilizada con otro payload produce conflicto",
+                    "value": {
+                      "result": "KO",
+                      "code": "IDEMPOTENCY_CONFLICT",
+                      "message": "La clave ya se usó con otro pedido"
+                    }
+                  },
+                  "ORD-12-1": {
+                    "summary": "ORD-12 · Producto sin stock",
+                    "value": {
+                      "result": "KO",
+                      "code": "OUT_OF_STOCK",
+                      "message": "Stock insuficiente"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Cuerpo demasiado grande",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "ORD-15-1": {
+                    "summary": "ORD-15 · Rechazar cuerpo superior a 64 KiB",
+                    "value": {
+                      "result": "KO",
+                      "code": "PAYLOAD_TOO_LARGE",
+                      "message": "El cuerpo supera 64 KiB"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Formato incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "ORD-14-1": {
+                    "summary": "ORD-14 · Content-Type incompatible",
+                    "value": {
+                      "result": "KO",
+                      "code": "UNSUPPORTED_MEDIA_TYPE",
+                      "message": "Se requiere application/json"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "ORD-18-1": {
+                    "summary": "ORD-18 · Cantidad cero",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_ORDER",
+                      "message": "Se requiere SKU y una cantidad entera entre 1 y 5"
+                    }
+                  },
+                  "ORD-19-1": {
+                    "summary": "ORD-19 · Cantidad por encima del máximo",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_ORDER",
+                      "message": "Se requiere SKU y una cantidad entera entre 1 y 5"
+                    }
+                  },
+                  "ORD-20-1": {
+                    "summary": "ORD-20 · Cantidad decimal",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_ORDER",
+                      "message": "Se requiere SKU y una cantidad entera entre 1 y 5"
+                    }
+                  },
+                  "ORD-21-1": {
+                    "summary": "ORD-21 · Cantidad como texto",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_ORDER",
+                      "message": "Se requiere SKU y una cantidad entera entre 1 y 5"
+                    }
+                  },
+                  "ORD-22-1": {
+                    "summary": "ORD-22 · Cantidad ausente",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_ORDER",
+                      "message": "Se requiere SKU y una cantidad entera entre 1 y 5"
+                    }
+                  },
+                  "ORD-23-1": {
+                    "summary": "ORD-23 · SKU ausente",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_ORDER",
+                      "message": "Se requiere SKU y una cantidad entera entre 1 y 5"
+                    }
+                  },
+                  "ORD-24-1": {
+                    "summary": "ORD-24 · Cuerpo null",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_ORDER",
+                      "message": "Se requiere SKU y una cantidad entera entre 1 y 5"
+                    }
+                  },
+                  "ORD-25-1": {
+                    "summary": "ORD-25 · Cantidad negativa",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_ORDER",
+                      "message": "Se requiere SKU y una cantidad entera entre 1 y 5"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}": {
+      "get": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Consultar un pedido como propietario",
+        "security": [
+          {
+            "DemoBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "ORD-1"
+          }
+        ],
+        "description": "Casos: [ORD-01](./casos.html#ORD-01) · [ORD-04](./casos.html#ORD-04) · [ORD-08](./casos.html#ORD-08) · [ORD-09](./casos.html#ORD-09) · [ORD-10](./casos.html#ORD-10)",
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "result",
+                    "data"
+                  ],
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "enum": [
+                        "OK"
+                      ]
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Order"
+                    }
+                  }
+                },
+                "examples": {
+                  "ORD-01-2": {
+                    "summary": "ORD-01 · Crear pedido y consultarlo como propietario",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 1
+                      }
+                    }
+                  },
+                  "ORD-04-3": {
+                    "summary": "ORD-04 · Clave reutilizada con otro payload produce conflicto",
+                    "value": {
+                      "result": "OK",
+                      "data": {
+                        "id": "ORD-1",
+                        "sku": "SKU-100",
+                        "quantity": 1
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente o inválido",
+            "headers": {
+              "www-authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Bearer"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "ORD-08-1": {
+                    "summary": "ORD-08 · Consulta con token inválido",
+                    "value": {
+                      "result": "KO",
+                      "code": "UNAUTHORIZED",
+                      "message": "Token ausente o inválido"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "ORD-09-2": {
+                    "summary": "ORD-09 · Otro usuario no puede consultar el pedido",
+                    "value": {
+                      "result": "KO",
+                      "code": "ORDER_NOT_FOUND",
+                      "message": "Pedido inexistente"
+                    }
+                  },
+                  "ORD-10-1": {
+                    "summary": "ORD-10 · Consultar un pedido inexistente",
+                    "value": {
+                      "result": "KO",
+                      "code": "ORDER_NOT_FOUND",
+                      "message": "Pedido inexistente"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lab/fault": {
+      "get": {
+        "tags": [
+          "Resiliencia"
+        ],
+        "summary": "Simular un fallo controlado",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "scenario",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "internal": {
+                "value": "internal"
+              },
+              "upstream": {
+                "value": "upstream"
+              },
+              "unavailable": {
+                "value": "unavailable"
+              },
+              "timeout": {
+                "value": "timeout"
+              },
+              "invalid": {
+                "value": "unknown"
+              }
+            }
+          }
+        ],
+        "description": "Casos: [RES-01](./casos.html#RES-01) · [RES-02](./casos.html#RES-02) · [RES-03](./casos.html#RES-03) · [RES-04](./casos.html#RES-04) · [RES-05](./casos.html#RES-05) · [RES-06](./casos.html#RES-06)",
+        "responses": {
+          "400": {
+            "description": "Solicitud inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "RES-05-1": {
+                    "summary": "RES-05 · Escenario de fallo inválido",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_SCENARIO",
+                      "message": "Selecciona un escenario de fallo válido"
+                    }
+                  },
+                  "RES-06-1": {
+                    "summary": "RES-06 · Escenario de fallo omitido",
+                    "value": {
+                      "result": "KO",
+                      "code": "INVALID_SCENARIO",
+                      "message": "Selecciona un escenario de fallo válido"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno simulado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "RES-01-1": {
+                    "summary": "RES-01 · Error interno controlado",
+                    "value": {
+                      "result": "KO",
+                      "code": "INTERNAL_ERROR",
+                      "message": "Error interno simulado"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Respuesta inválida del proveedor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "RES-02-1": {
+                    "summary": "RES-02 · Respuesta inválida del proveedor simulado",
+                    "value": {
+                      "result": "KO",
+                      "code": "BAD_GATEWAY",
+                      "message": "Respuesta inválida del proveedor simulado"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Servicio temporalmente no disponible",
+            "headers": {
+              "retry-after": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "10"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "RES-03-1": {
+                    "summary": "RES-03 · Indisponibilidad con Retry-After",
+                    "value": {
+                      "result": "KO",
+                      "code": "SERVICE_UNAVAILABLE",
+                      "message": "Servicio temporalmente no disponible"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Tiempo de espera agotado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "RES-04-1": {
+                    "summary": "RES-04 · Timeout simulado del proveedor",
+                    "value": {
+                      "result": "KO",
+                      "code": "GATEWAY_TIMEOUT",
+                      "message": "Tiempo de espera del proveedor agotado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "DemoBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Token ficticio del laboratorio"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "result",
+          "code",
+          "message"
+        ],
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "KO"
+            ]
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "required": [
+          "id",
+          "sku",
+          "quantity"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "stock"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "stock": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  }
+}

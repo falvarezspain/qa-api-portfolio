@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QA API Portfolio · Swagger</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui.css">
+<style>
+body{margin:0;background:#f6f8fb}header{background:#142c46;color:white;padding:1.4rem clamp(1rem,5vw,4rem);font:1rem system-ui,sans-serif}
+header a{color:#bce3ff}header p{margin:.5rem 0}header h1{margin:0}#loading{margin:1.5rem;font:1rem system-ui,sans-serif}
+</style>
+</head>
+<body>
+<header><h1>QA API Portfolio</h1><p>Laboratorio de catálogo, pedidos y resiliencia</p>
+<nav><a href="./casos.html">Matriz de pruebas</a> · <a href="./openapi.json">Contrato OpenAPI</a></nav></header>
+<p id="loading">Cargando Swagger UI. La interfaz requiere acceso a jsDelivr.</p>
+<p id="preview" hidden>Documentación pública y ejemplos. Para ejecutar las peticiones con Try it out, iniciá el laboratorio local.</p>
+<main id="swagger-ui"></main>
+<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+<script>
+function renderSwagger() {
+  const preview = location.hostname.endsWith('.github.io');
+  document.getElementById('preview').hidden = !preview;
+  document.getElementById('loading').hidden = true;
+  SwaggerUIBundle({
+    url: './openapi.json', dom_id: '#swagger-ui', deepLinking: true, validatorUrl: null,
+    ...(preview ? { supportedSubmitMethods: [] } : {}),
+  });
+}
+if (window.SwaggerUIBundle) renderSwagger();
+</script>
+</body>
+</html>
